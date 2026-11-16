@@ -1,0 +1,30 @@
+Mojotron: the keys
+==================
+
+You move with one group of keys and fire with another; firing is
+automatic, in the direction you aim. The groups are set in the game's
+options (the menu), and these are the first ones:
+
+  W A S D             move
+  Cursor keys         aim and fire
+  Space               use the powerup you carry (the diamonds)
+  P or Esc            pause (the in-game menu)
+
+Sound and music start off: turn them on in the options, or start with
+--enable-sound --enable-music.
+
+A joystick or pad works too: SDL 2 game controllers, one stick to move
+and one to aim.
+
+Three of a kind, three of one colour, or three in rainbow order of the
+fruit give powerups and extra lives. Finish a level inside its time to
+skip three levels and win a life.
+
+From a Shell:
+  Mojotron [--fullscreen] [--enable-sound] [--enable-music] [-f res.xml]
+  (-f res.xml plays with the original 2002 pictures)
+
+The keys every AmiCradle game has on Right Amiga (GFOpenUp's SDL2.module):
+Right Amiga + F window or full screen, + P pause, + Q quit, + M free the
+mouse pointer, + S a screenshot in the drawer's Screenshots, and Help
+shows this file.

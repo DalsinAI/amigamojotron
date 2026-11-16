@@ -1,0 +1,88 @@
+# Mojotron: Robot Wars for GFOS (AmigaOS 3.2 with GFOpenUp), 68040/68060 +
+# FPU, on GFOpenUp's SDL 2 (LIBS:GFOpenGPU/SDL2.module, SDL2_image.module
+# and SDL2_mixer.module).
+#
+#   make -f amiga/Makefile.amigaos -j4 MJ=/path/to/mojotron [STOVE=/path/to/os32-gcc16-open6]
+#
+# MJ is upstream Mojotron at the commit package/mojotron.lock names, with
+# amiga/patches applied (package/build-amiga.sh fetches and patches it).
+# Upstream's expatcpp.cpp is replaced by amiga/xmlreader.cpp, our own
+# reader (no Expat). STOVE is a GFOpenAmigaGCC 16.2.0-open6 stove.
+#
+# Output: build/amigaos/Mojotron/ (the drawer: Mojotron, its resource
+# files, graphics/, robotwar/, wavs/, mods/, User/, ReadMe, Controls, the
+# licences, with GlowIcons), build/amigaos/Mojotron.info and
+# Install-Mojotron beside them.
+
+MJ      ?= ../mojotron
+STOVE   ?= $(HOME)/AmiCradle/stoves/os32-gcc16-open6
+PREFIX  ?= $(STOVE)/prefix
+SDL2KIT ?= $(PREFIX)/m68k-amigaos
+CC      = $(PREFIX)/bin/m68k-amigaos-gcc
+CXX     = $(PREFIX)/bin/m68k-amigaos-g++
+STRIP   = $(PREFIX)/bin/m68k-amigaos-strip
+CPU     ?= -m68040 -m68881
+# -fno-tree-loop-distribute-patterns: GCC 16's loop miscompile (the kit's
+# sdl2-config gives it for GCC 16 too).
+OPT     ?= -O2 -fomit-frame-pointer -fno-tree-loop-distribute-patterns
+
+INC      = -Iamiga/include -I$(MJ) -I$(SDL2KIT)/include/SDL2
+CFLAGS   = -noixemul $(OPT) $(CPU) -D__amigaos__
+CXXFLAGS = $(CFLAGS) -std=gnu++20 $(INC)
+LDFLAGS  = -noixemul $(CPU)
+# open6's libstdc++ needs -lpthread -latomic
+LIBS     = -L$(SDL2KIT)/lib -lSDL2_image -lSDL2_mixer -lSDL2 -lpthread -latomic -lm
+
+BUILD   = build/amigaos
+OBJDIR  = $(BUILD)/obj
+OUT     = $(BUILD)/Mojotron
+PROG    = Mojotron
+
+SRC     = $(filter-out $(MJ)/expatcpp.cpp,$(wildcard $(MJ)/*.cpp))
+OBJS    = $(patsubst $(MJ)/%.cpp,$(OBJDIR)/mj/%.o,$(SRC)) \
+          $(OBJDIR)/amiga/xmlreader.o $(OBJDIR)/amiga/amiga_start.o
+
+all: $(OUT)/$(PROG) package
+
+$(BUILD)/$(PROG).debug: $(OBJS)
+	@mkdir -p $(BUILD)
+	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
+
+$(OUT)/$(PROG): $(BUILD)/$(PROG).debug
+	@mkdir -p $(OUT)
+	$(STRIP) -o $@ $<
+
+package: $(OUT)/$(PROG) AMIGA_PORT.md amiga/Licences.txt amiga/Controls
+	mkdir -p $(OUT)/User
+	cp $(MJ)/robotwar.xml $(MJ)/res.xml $(MJ)/sound.scr $(MJ)/demo $(OUT)/
+	cp -R $(MJ)/graphics $(MJ)/robotwar $(MJ)/wavs $(MJ)/mods $(OUT)/
+	cp amiga/Controls $(OUT)/Controls
+	cp AMIGA_PORT.md $(OUT)/ReadMe
+	cp $(MJ)/README $(OUT)/ReadMe-Mojotron
+	cp $(MJ)/GUIDE $(OUT)/Guide
+	cp $(MJ)/AUTHORS $(OUT)/Authors
+	cp $(MJ)/COPYING $(OUT)/COPYING.txt
+	cp amiga/Licences.txt $(OUT)/Licences.txt
+	cp amiga/icons/Mojotron.info amiga/icons/ReadMe.info $(OUT)/
+	for f in ReadMe-Mojotron Guide Authors COPYING.txt Licences.txt Controls; do \
+	    cp amiga/icons/ReadMe.info $(OUT)/$$f.info; done
+	cp amiga/icons/Data.info $(OUT)/User.info
+	cp amiga/icons/Mojotron-drawer.info $(BUILD)/Mojotron.info
+	cp amiga/Install-Mojotron amiga/Install-Mojotron.info $(BUILD)/
+
+$(OBJDIR)/mj/%.o: $(MJ)/%.cpp $(wildcard $(MJ)/*.h $(MJ)/*.hh)
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+$(OBJDIR)/amiga/%.o: amiga/%.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+$(OBJDIR)/amiga/%.o: amiga/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+clean:
+	rm -rf $(BUILD)
+
+.PHONY: all package clean
