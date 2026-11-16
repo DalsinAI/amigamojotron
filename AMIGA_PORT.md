@@ -55,6 +55,9 @@ Mojotron-VERSION-68040.lha and the GFOpenUp part Parts/Mojotron.
 Host test: `sh tests/host/test_xmlreader.sh` reads tests/host/samples.xml
 and Mojotron's own res.xml and robotwar.xml with Expat and with
 amiga/xmlreader.cpp, and checks both give the same events.
+`sh tests/host/test_amiga_patches.sh` builds the patched IRandom.cpp on the
+host as for AmigaOS and rolls it, and checks the image decoder hint is set
+on AmigaOS only, before SDL_Init and the pictures.
 
 
 What was changed
@@ -64,6 +67,15 @@ What was changed
   reader in place of Expat, behind upstream's ExpatXMLParser class.
 - amiga/patches/0001-user-path-amigaos.patch (ConfigFile.cpp): the
   settings in PROGDIR:User, with no std::filesystem.
+- amiga/patches/0002-image-decoder-amigaos.patch (main.cpp): the
+  pictures are decoded by SDL2_image's own 68k decoder (hint
+  SDL_IMAGE_DECODER cpu). Sent one by one to the services card's cores
+  they took minutes on a busy Cradle (a blank window); decoded here they
+  take seconds. SetEnv SDL_IMAGE_DECODER auto gives the cores back.
+- amiga/patches/0003-random-seed-amigaos.patch (IRandom.cpp): libstdc++
+  has no random device on AmigaOS (std::random_device throws and the
+  game stopped at start); the seed is the time of day and SDL's
+  performance counter.
 - amiga/amiga_start.c: 256 KB of stack, the $VER string, the drawer as
   the current directory and PROGDIR:User made at start.
 - No Gamerzilla (it is optional upstream).
