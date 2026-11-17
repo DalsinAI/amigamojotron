@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!DOCTYPE resources>
+<!-- a comment with <tags> & things -->
+<resources>
+	<section name="A &amp; B">
+		<string name="keys" value=" ^ &lt; &gt; ; " />
+		<string name='single' value='it&apos;s "quoted"'/>
+		<integer name="n" value="&#52;&#x32;"/>
+		<text>hello &quot;world&quot;</text>
+	</section>
+	<empty/>
+</resources>

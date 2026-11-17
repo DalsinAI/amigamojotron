@@ -1,0 +1,6 @@
+# The upstream Mojotron the port builds: fetched at this commit by
+# package/build-amiga.sh, never kept in this repository.
+MOJOTRON_URL=https://gitlab.com/dulsi/mojotron.git
+MOJOTRON_COMMIT=6ee4b12db33417d0d857abb621b366ffb62d0d32
+MOJOTRON_VERSION=1.1
+PORT_VERSION=1.1-gfos1

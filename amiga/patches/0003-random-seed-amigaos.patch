@@ -1,0 +1,33 @@
+diff --git a/IRandom.cpp b/IRandom.cpp
+index 865a8f5..5ea754b 100644
+--- a/IRandom.cpp
++++ b/IRandom.cpp
+@@ -7,13 +7,28 @@
+ 
+ #include "IRandom.hh"
+ 
++#ifdef __amigaos__
++#include <ctime>
++#include <SDL.h>
++#else
+ static std::random_device *r;
++#endif
+ static std::default_random_engine *generator;
+ 
+ void IRandom::init()
+ {
++#ifdef __amigaos__
++ /* GFOS: libstdc++ has no random device here (no /dev/urandom) and
++  * std::random_device throws. The seed is the time of day and SDL's
++  * performance counter (the E-clock), different on every start; main()
++  * calls this after SDL_Init. */
++ Uint64 pc = SDL_GetPerformanceCounter();
++ generator = new std::default_random_engine(
++  (unsigned int)std::time(nullptr) ^ (unsigned int)pc ^ (unsigned int)(pc >> 32));
++#else
+  r = new std::random_device;
+  generator = new std::default_random_engine((*r)());
++#endif
+ }
+ 
+ int IRandom::roll(int range)

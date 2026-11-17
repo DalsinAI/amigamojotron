@@ -1,0 +1,19 @@
+diff --git a/main.cpp b/main.cpp
+index 0f7d005..2ad6192 100644
+--- a/main.cpp
++++ b/main.cpp
+@@ -120,6 +120,14 @@ class MojoApp : Application {
+ 			}
+ 		}
+ 
++#ifdef __amigaos__
++		// GFOS: SDL2_image.module sends each PNG to the services card's
++		// cores first, one request per picture; Mojotron reads about 60 at
++		// start-up, which took minutes on a busy Cradle. The 68040's own
++		// decoder reads them in seconds. SetEnv SDL_IMAGE_DECODER auto
++		// still picks the cores.
++		SDL_SetHint("SDL_IMAGE_DECODER", "cpu");
++#endif
+ 		if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER) < 0)
+ 		{
+ 			std::cout << "Failed - SDL_Init" << std::endl;

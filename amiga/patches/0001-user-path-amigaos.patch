@@ -1,0 +1,17 @@
+diff --git a/ConfigFile.cpp b/ConfigFile.cpp
+index 195def6..9a28988 100644
+--- a/ConfigFile.cpp
++++ b/ConfigFile.cpp
+@@ -79,7 +79,11 @@ Config::Config() {
+ }
+ 
+ std::string ConfigFile::getUserPath() {
+-#ifdef WIN32
++#if defined(__amigaos__)
++	// GFOS: the settings and high scores are in the game's drawer, in
++	// PROGDIR:User (made at start by amiga/amiga_start.c).
++	return "PROGDIR:User";
++#elif defined(WIN32)
+ 	std::filesystem::create_directories("save");
+ 	return "save";
+ #else

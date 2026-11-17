@@ -1,0 +1,17 @@
+Mojotron: Robot Wars: licences
+==============================
+
+The game: Mojotron by Craig Timpany, in Dennis Payne's SDL 2 version,
+Mojotron: Robot Wars, https://gitlab.com/dulsi/mojotron.
+
+- The program, its resource files, pictures, sounds and music are under
+  the GNU General Public License, version 2 or later (COPYING.txt).
+- The newer pictures in robotwar/ come from OpenGameArt and others, each
+  under the licence robotwar/CREDITS.md names for it (CC0, CC-BY 3.0,
+  OGA-BY 3.0, CC-BY-SA 3.0, GPL 2 or GPL 3); Authors lists the people.
+- The Amiga port's own files (amiga/, AMIGA_PORT.md, package/, tools/,
+  tests/), among them amiga/xmlreader.cpp, the XML reader in place of
+  Expat, are GPL 2 or later, like the game; the GlowIcon art is The
+  AmiCradle Team's own.
+
+The game's data are upstream's own, unchanged.

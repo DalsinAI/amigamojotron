@@ -1,0 +1,14 @@
+{
+  "name": "Mojotron",
+  "version": "1.1-gfos1",
+  "drawer": "Mojotron",
+  "program": "Mojotron",
+  "cpu": "68040",
+  "fpu": true,
+  "space": 5500000,
+  "modules": ["SDL2.module", "SDL2_image.module", "SDL2_mixer.module"],
+  "keep": ["User"],
+  "parent": "Work:Games",
+  "badge": "icons/art/mojotron.png",
+  "script": "Install-Mojotron"
+}
